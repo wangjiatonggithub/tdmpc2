@@ -1,0 +1,3 @@
+- task=dog-run
+- checkpoint=./checkpoint/dog-run-1.pt
+- save_video=true

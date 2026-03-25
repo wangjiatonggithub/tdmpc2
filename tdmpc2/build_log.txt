@@ -1,0 +1,165 @@
+Using pip 24.0 from /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pip (python 3.9)
+Collecting mujoco-py==2.1.2.14
+  Obtaining dependency information for mujoco-py==2.1.2.14 from https://files.pythonhosted.org/packages/37/e5/e7504cb2ded511910c2a2e8f9c9e28af075850eb03a5c5a8daee5d7d9517/mujoco_py-2.1.2.14-py3-none-any.whl.metadata
+  Downloading mujoco_py-2.1.2.14-py3-none-any.whl.metadata (669 bytes)
+Collecting glfw>=1.4.0 (from mujoco-py==2.1.2.14)
+  Obtaining dependency information for glfw>=1.4.0 from https://files.pythonhosted.org/packages/5a/3f/efeb7c6801c46e11bd666a5180f0d615f74f72264212f74f39586c6fda9d/glfw-2.10.0-py2.py27.py3.py30.py31.py32.py33.py34.py35.py36.py37.py38.py39.py310.py311.py312.py313.py314-none-manylinux_2_28_x86_64.whl.metadata
+  Downloading glfw-2.10.0-py2.py27.py3.py30.py31.py32.py33.py34.py35.py36.py37.py38.py39.py310.py311.py312.py313.py314-none-manylinux_2_28_x86_64.whl.metadata (5.4 kB)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/54/a4/f8188c4f3e07f7737683588210c073478abcb542048cf4ab6fedad0b458a/numpy-2.1.0.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.10)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/59/5f/9003bb3e632f2b58f5e3a3378902dcc73c5518070736c6740fe52454e8e1/numpy-2.1.1.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.10)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/4b/d1/8a730ea07f4a37d94f9172f4ce1d81064b7a64766b460378be278952de75/numpy-2.1.2.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.10)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/25/ca/1166b75c21abd1da445b97bf1fa2f14f423c6cfb4fc7c4ef31dccf9f6a94/numpy-2.1.3.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.10)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/47/1b/1d565e0f6e156e1522ab564176b8b29d71e13d8caf003a08768df3d5cec5/numpy-2.2.0.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.10)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/f2/a5/fdbf6a7871703df6160b5cf3dd774074b086d278172285c52c2758b76305/numpy-2.2.1.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.10)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/ec/d0/c12ddfd3a02274be06ffc71f3efc6d0e457b0409c4481596881e748cb264/numpy-2.2.2.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.10)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/fb/90/8956572f5c4ae52201fdec7ba2044b2c882832dcec7d5d0922c9e9acf2de/numpy-2.2.3.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.10)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/e1/78/31103410a57bc2c2b93a3597340a8119588571f6a4539067546cb9a0bfac/numpy-2.2.4.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.10)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/dc/b2/ce4b867d8cd9c0ee84938ae1e6a6f7926ebf928c9090d036fc3c6a04f946/numpy-2.2.5.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.10)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/76/21/7d2a95e4bba9dc13d043ee156a356c0a8f0c6309dff6b21b4d71a073b8a8/numpy-2.2.6.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.10)
+  Link requires a different Python (3.9.23 not in: '>=3.11'): https://files.pythonhosted.org/packages/f3/db/8e12381333aea300890829a0a36bfa738cac95475d88982d538725143fd9/numpy-2.3.0.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.11)
+  Link requires a different Python (3.9.23 not in: '>=3.11'): https://files.pythonhosted.org/packages/2e/19/d7c972dfe90a353dbd3efbbe1d14a5951de80c99c9dc1b93cd998d51dc0f/numpy-2.3.1.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.11)
+  Link requires a different Python (3.9.23 not in: '>=3.11'): https://files.pythonhosted.org/packages/37/7d/3fec4199c5ffb892bed55cff901e4f39a58c81df9c44c280499e92cad264/numpy-2.3.2.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.11)
+  Link requires a different Python (3.9.23 not in: '>=3.11'): https://files.pythonhosted.org/packages/d0/19/95b3d357407220ed24c139018d2518fab0a61a948e68286a25f1a4d049ff/numpy-2.3.3.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.11)
+  Link requires a different Python (3.9.23 not in: '>=3.11'): https://files.pythonhosted.org/packages/b5/f4/098d2270d52b41f1bd7db9fc288aaa0400cb48c2a3e2af6fa365d9720947/numpy-2.3.4.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.11)
+  Link requires a different Python (3.9.23 not in: '>=3.11'): https://files.pythonhosted.org/packages/76/65/21b3bc86aac7b8f2862db1e808f1ea22b028e30a225a34a5ede9bf8678f2/numpy-2.3.5.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.11)
+  Link requires a different Python (3.9.23 not in: '>=3.11'): https://files.pythonhosted.org/packages/12/02/7111f298e24a44d6fa4b75b47d93eccf444e5afbcee5b04aac760ee48935/numpy-2.4.0rc1.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.11)
+  Link requires a different Python (3.9.23 not in: '>=3.11'): https://files.pythonhosted.org/packages/a4/7a/6a3d14e205d292b738db449d0de649b373a59edb0d0b4493821d0a3e8718/numpy-2.4.0.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.11)
+  Link requires a different Python (3.9.23 not in: '>=3.11'): https://files.pythonhosted.org/packages/24/62/ae72ff66c0f1fd959925b4c11f8c2dea61f47f6acaea75a08512cdfe3fed/numpy-2.4.1.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.11)
+  Link requires a different Python (3.9.23 not in: '>=3.11'): https://files.pythonhosted.org/packages/57/fd/0005efbd0af48e55eb3c7208af93f2862d4b1a56cd78e84309a2d959208d/numpy-2.4.2.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.11)
+  Link requires a different Python (3.9.23 not in: '>=3.11'): https://files.pythonhosted.org/packages/10/8b/c265f4823726ab832de836cdd184d0986dcf94480f81e8739692a7ac7af2/numpy-2.4.3.tar.gz (from https://pypi.org/simple/numpy/) (requires-python:>=3.11)
+Collecting numpy>=1.11 (from mujoco-py==2.1.2.14)
+  Obtaining dependency information for numpy>=1.11 from https://files.pythonhosted.org/packages/b9/14/78635daab4b07c0930c919d451b8bf8c164774e6a3413aed04a6d95758ce/numpy-2.0.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata
+  Downloading numpy-2.0.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (60 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 60.9/60.9 kB 887.2 kB/s eta 0:00:00
+Collecting Cython>=0.27.2 (from mujoco-py==2.1.2.14)
+  Obtaining dependency information for Cython>=0.27.2 from https://files.pythonhosted.org/packages/c3/1a/416cc55d567f94b1249a0e007951115e2f7d296eabc345276c3859af76c9/cython-3.2.4-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata
+  Downloading cython-3.2.4-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (7.5 kB)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/49/fa/391e437a34e55095173dca5f24070d89cbc233ff85bf1c29c93248c6588d/imageio-2.37.3-py3-none-any.whl (from https://pypi.org/simple/imageio/) (requires-python:>=3.10)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/b1/84/93bcd1300216ea50811cee96873b84a1bebf8d0489ffaf7f2a3756bab866/imageio-2.37.3.tar.gz (from https://pypi.org/simple/imageio/) (requires-python:>=3.10)
+Collecting imageio>=2.1.2 (from mujoco-py==2.1.2.14)
+  Obtaining dependency information for imageio>=2.1.2 from https://files.pythonhosted.org/packages/fb/fe/301e0936b79bcab4cacc7548bf2853fc28dced0a578bab1f7ef53c9aa75b/imageio-2.37.2-py3-none-any.whl.metadata
+  Downloading imageio-2.37.2-py3-none-any.whl.metadata (9.7 kB)
+Collecting cffi>=1.10 (from mujoco-py==2.1.2.14)
+  Obtaining dependency information for cffi>=1.10 from https://files.pythonhosted.org/packages/1f/74/cc4096ce66f5939042ae094e2e96f53426a979864aa1f96a621ad128be27/cffi-2.0.0-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata
+  Downloading cffi-2.0.0-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.6 kB)
+Collecting fasteners~=0.15 (from mujoco-py==2.1.2.14)
+  Obtaining dependency information for fasteners~=0.15 from https://files.pythonhosted.org/packages/51/ac/e5d886f892666d2d1e5cb8c1a41146e1d79ae8896477b1153a21711d3b44/fasteners-0.20-py3-none-any.whl.metadata
+  Downloading fasteners-0.20-py3-none-any.whl.metadata (4.8 kB)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/0c/c3/44f3fbbfa403ea2a7c779186dc20772604442dde72947e7d01069cbe98e3/pycparser-3.0-py3-none-any.whl (from https://pypi.org/simple/pycparser/) (requires-python:>=3.10)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/1b/7d/92392ff7815c21062bea51aa7b87d45576f649f16458d78b7cf94b9ab2e6/pycparser-3.0.tar.gz (from https://pypi.org/simple/pycparser/) (requires-python:>=3.10)
+Collecting pycparser (from cffi>=1.10->mujoco-py==2.1.2.14)
+  Obtaining dependency information for pycparser from https://files.pythonhosted.org/packages/a0/e3/59cd50310fc9b59512193629e1984c1f95e5c8ae6e5d8c69532ccc65a7fe/pycparser-2.23-py3-none-any.whl.metadata
+  Downloading pycparser-2.23-py3-none-any.whl.metadata (993 bytes)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/5a/b0/cace85a1b0c9775a9f8f5d5423c8261c858760e2466c79b2dd184638b056/pillow-12.0.0.tar.gz (from https://pypi.org/simple/pillow/) (requires-python:>=3.10)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/d0/02/d52c733a2452ef1ffcc123b68e6606d07276b0e358db70eabad7e40042b7/pillow-12.1.0.tar.gz (from https://pypi.org/simple/pillow/) (requires-python:>=3.10)
+  Link requires a different Python (3.9.23 not in: '>=3.10'): https://files.pythonhosted.org/packages/1f/42/5c74462b4fd957fcd7b13b04fb3205ff8349236ea74c7c375766d6c82288/pillow-12.1.1.tar.gz (from https://pypi.org/simple/pillow/) (requires-python:>=3.10)
+Collecting pillow>=8.3.2 (from imageio>=2.1.2->mujoco-py==2.1.2.14)
+  Obtaining dependency information for pillow>=8.3.2 from https://files.pythonhosted.org/packages/a5/a0/98a3630f0b57f77bae67716562513d3032ae70414fcaf02750279c389a9e/pillow-11.3.0-cp39-cp39-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata
+  Downloading pillow-11.3.0-cp39-cp39-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.0 kB)
+Downloading mujoco_py-2.1.2.14-py3-none-any.whl (2.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.4/2.4 MB 10.3 MB/s eta 0:00:00
+Downloading cffi-2.0.0-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (216 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 216.5/216.5 kB 90.7 MB/s eta 0:00:00
+Downloading cython-3.2.4-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.5/3.5 MB 54.9 MB/s eta 0:00:00
+Downloading fasteners-0.20-py3-none-any.whl (18 kB)
+Downloading glfw-2.10.0-py2.py27.py3.py30.py31.py32.py33.py34.py35.py36.py37.py38.py39.py310.py311.py312.py313.py314-none-manylinux_2_28_x86_64.whl (243 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 243.5/243.5 kB 93.2 MB/s eta 0:00:00
+Downloading imageio-2.37.2-py3-none-any.whl (317 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 317.6/317.6 kB 228.6 MB/s eta 0:00:00
+Downloading numpy-2.0.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (19.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 19.5/19.5 MB 57.3 MB/s eta 0:00:00
+Downloading pillow-11.3.0-cp39-cp39-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.6/6.6 MB 58.8 MB/s eta 0:00:00
+Downloading pycparser-2.23-py3-none-any.whl (118 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 118.1/118.1 kB 86.1 MB/s eta 0:00:00
+Installing collected packages: glfw, pycparser, pillow, numpy, fasteners, Cython, imageio, cffi, mujoco-py
+  Attempting uninstall: glfw
+    Found existing installation: glfw 2.10.0
+    Uninstalling glfw-2.10.0:
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/glfw-2.10.0.dist-info/
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/glfw/
+      Successfully uninstalled glfw-2.10.0
+  Attempting uninstall: pycparser
+    Found existing installation: pycparser 2.23
+    Uninstalling pycparser-2.23:
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pycparser-2.23.dist-info/
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pycparser/__init__.py
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pycparser/__pycache__/
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pycparser/_ast_gen.py
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pycparser/_build_tables.py
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pycparser/_c_ast.cfg
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pycparser/ast_transforms.py
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pycparser/c_ast.py
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pycparser/c_generator.py
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pycparser/c_lexer.py
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pycparser/c_parser.py
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pycparser/lextab.py
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pycparser/ply/
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pycparser/plyparser.py
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pycparser/yacctab.py
+      Successfully uninstalled pycparser-2.23
+  Attempting uninstall: pillow
+    Found existing installation: pillow 11.3.0
+    Uninstalling pillow-11.3.0:
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/PIL/
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pillow-11.3.0.dist-info/
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pillow.libs/
+      Successfully uninstalled pillow-11.3.0
+  Attempting uninstall: numpy
+    Found existing installation: numpy 2.0.2
+    Uninstalling numpy-2.0.2:
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/bin/f2py
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/bin/numpy-config
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/numpy-2.0.2.dist-info/
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/numpy.libs/
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/numpy/
+      Successfully uninstalled numpy-2.0.2
+  changing mode of /home/wangjiatong/miniconda3/envs/tdmpc2/bin/f2py to 775
+  changing mode of /home/wangjiatong/miniconda3/envs/tdmpc2/bin/numpy-config to 775
+  Attempting uninstall: fasteners
+    Found existing installation: fasteners 0.20
+    Uninstalling fasteners-0.20:
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/fasteners-0.20.dist-info/
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/fasteners/
+      Successfully uninstalled fasteners-0.20
+  Attempting uninstall: Cython
+    Found existing installation: Cython 3.2.4
+    Uninstalling Cython-3.2.4:
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/bin/cygdb
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/bin/cython
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/bin/cythonize
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/Cython/
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/__pycache__/cython.cpython-39.pyc
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/cython-3.2.4.dist-info/
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/cython.py
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/pyximport/
+      Successfully uninstalled Cython-3.2.4
+  changing mode of /home/wangjiatong/miniconda3/envs/tdmpc2/bin/cygdb to 775
+  changing mode of /home/wangjiatong/miniconda3/envs/tdmpc2/bin/cython to 775
+  changing mode of /home/wangjiatong/miniconda3/envs/tdmpc2/bin/cythonize to 775
+  Attempting uninstall: imageio
+    Found existing installation: ImageIO 2.37.2
+    Uninstalling ImageIO-2.37.2:
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/bin/imageio_download_bin
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/bin/imageio_remove_bin
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/imageio-2.37.2.dist-info/
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/imageio/
+      Successfully uninstalled ImageIO-2.37.2
+  changing mode of /home/wangjiatong/miniconda3/envs/tdmpc2/bin/imageio_download_bin to 775
+  changing mode of /home/wangjiatong/miniconda3/envs/tdmpc2/bin/imageio_remove_bin to 775
+  Attempting uninstall: cffi
+    Found existing installation: cffi 2.0.0
+    Uninstalling cffi-2.0.0:
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/_cffi_backend.cpython-39-x86_64-linux-gnu.so
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/cffi-2.0.0.dist-info/
+      Removing file or directory /home/wangjiatong/miniconda3/envs/tdmpc2/lib/python3.9/site-packages/cffi/
+      Successfully uninstalled cffi-2.0.0
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+dm-control 1.0.9 requires dm-env, which is not installed.
+dm-control 1.0.9 requires dm-tree!=0.1.2, which is not installed.
+dm-control 1.0.9 requires labmaze, which is not installed.
+dm-control 1.0.9 requires lxml, which is not installed.
+dm-control 1.0.9 requires pyparsing>=3.0.0, which is not installed.
+dm-control 1.0.9 requires mujoco>=2.3.1.post1, but you have mujoco 2.3.1 which is incompatible.
+Successfully installed Cython-3.2.4 cffi-2.0.0 fasteners-0.20 glfw-2.10.0 imageio-2.37.2 mujoco-py-2.1.2.14 numpy-2.0.2 pillow-11.3.0 pycparser-2.23

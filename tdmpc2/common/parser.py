@@ -1,5 +1,5 @@
 import dataclasses
-import re
+import re # 正则表达式
 from pathlib import Path
 from typing import Any
 
@@ -9,7 +9,7 @@ from omegaconf import OmegaConf
 from common import MODEL_SIZE, TASK_SET
 
 
-def cfg_to_dataclass(cfg, frozen=False):
+def cfg_to_dataclass(cfg, frozen=False): # 把omegaconf对象转换成dataclass对象
 	"""
 	Converts an OmegaConf config to a dataclass object.
 	This prevents graph breaks when used with torch.compile.
@@ -32,7 +32,7 @@ def parse_cfg(cfg: OmegaConf) -> OmegaConf:
 	"""
 
 	# Logic
-	for k in cfg.keys():
+	for k in cfg.keys(): # 遍历cfg中的每个键，若值为None，则将其置为True
 		try:
 			v = cfg[k]
 			if v == None:
@@ -45,10 +45,10 @@ def parse_cfg(cfg: OmegaConf) -> OmegaConf:
 		try:
 			v = cfg[k]
 			if isinstance(v, str):
-				match = re.match(r"(\d+)([+\-*/])(\d+)", v)
+				match = re.match(r"(\d+)([+\-*/])(\d+)", v) # 检查字符串是否有+/-/*/\计算，有就计算出来并更新配置值
 				if match:
 					cfg[k] = eval(match.group(1) + match.group(2) + match.group(3))
-					if isinstance(cfg[k], float) and cfg[k].is_integer():
+					if isinstance(cfg[k], float) and cfg[k].is_integer(): # 如果结果是整数但类型是float，则转换为int
 						cfg[k] = int(cfg[k])
 		except:
 			pass
@@ -70,7 +70,7 @@ def parse_cfg(cfg: OmegaConf) -> OmegaConf:
 	# Multi-task
 	cfg.multitask = cfg.task in TASK_SET.keys()
 	if cfg.multitask:
-		cfg.task_title = cfg.task.upper()
+		cfg.task_title = cfg.task.upper() # 将任务名称变为大写
 		# Account for slight inconsistency in task_dim for the mt30 experiments
 		cfg.task_dim = 96 if cfg.task == 'mt80' or cfg.get('model_size', 5) in {1, 317} else 64
 	else:

@@ -1,4 +1,4 @@
-name: tdmpc2
+name: tdmpc2_dm
 channels:
   - pytorch-nightly
   - nvidia

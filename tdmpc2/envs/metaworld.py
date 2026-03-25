@@ -31,7 +31,7 @@ class MetaWorldWrapper(gym.Wrapper):
 	def unwrapped(self):
 		return self.env.unwrapped
 
-	def render(self, *args, **kwargs):
+	def render(self, *args, **kwargs): # 定义离屏渲染，将渲染结果返回存入numphy数组
 		return self.env.render(
 			offscreen=True, resolution=(384, 384), camera_name=self.camera_name
 		).copy()

@@ -4,7 +4,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 import hydra
-import imageio
+import imageio # 保存视频
 import numpy as np
 import torch
 from termcolor import colored
@@ -18,7 +18,7 @@ torch.backends.cudnn.benchmark = True
 
 
 @hydra.main(config_name='config', config_path='.')
-def evaluate(cfg: dict):
+def evaluate(cfg: dict): # 函数传递的cfg字典由hdrya自动从config.yaml加载
 	"""
 	Script for evaluating a single-task / multi-task TD-MPC2 checkpoint.
 
@@ -91,7 +91,7 @@ def evaluate(cfg: dict):
 		ep_rewards = np.mean(ep_rewards)
 		ep_successes = np.mean(ep_successes)
 		if cfg.multitask:
-			scores.append(ep_successes*100 if task.startswith('mw-') else ep_rewards/10)
+			scores.append(ep_successes*100 if task.startswith('mw-') else ep_rewards/10) # 若是metaworld任务，得分按成功率百分比计算；否则按奖励除以10计算
 		print(colored(f'  {task:<22}' \
 			f'\tR: {ep_rewards:.01f}  ' \
 			f'\tS: {ep_successes:.02f}', 'yellow'))

@@ -1,0 +1,3 @@
+- task=mw-button-press-wall
+- checkpoint=./checkpoint/mw-button-press-wall-1.pt
+- save_video=true

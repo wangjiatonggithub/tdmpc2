@@ -20,7 +20,7 @@ class TDMPC2(torch.nn.Module):
 		self.cfg = cfg
 		self.device = torch.device('cuda:0')
 		self.model = WorldModel(cfg).to(self.device)
-		self.optim = torch.optim.Adam([
+		self.optim = torch.optim.Adam([ # 优化器，包括编码器、动态模型、奖励函数、结束条件、价值函数、任务嵌入网络模型
 			{'params': self.model._encoder.parameters(), 'lr': self.cfg.lr*self.cfg.enc_lr_scale},
 			{'params': self.model._dynamics.parameters()},
 			{'params': self.model._reward.parameters()},
@@ -29,22 +29,22 @@ class TDMPC2(torch.nn.Module):
 			{'params': self.model._task_emb.parameters() if self.cfg.multitask else []
 			 }
 		], lr=self.cfg.lr, capturable=True)
-		self.pi_optim = torch.optim.Adam(self.model._pi.parameters(), lr=self.cfg.lr, eps=1e-5, capturable=True)
-		self.model.eval()
-		self.scale = RunningScale(cfg)
-		self.cfg.iterations += 2*int(cfg.action_dim >= 20) # Heuristic for large action spaces
-		self.discount = torch.tensor(
+		self.pi_optim = torch.optim.Adam(self.model._pi.parameters(), lr=self.cfg.lr, eps=1e-5, capturable=True) # 策略网络优化器，capturable=True为了在编译时与cuda图兼容
+		self.model.eval() # 将模型设置为评估模式，禁用dropout和batchnorm等训练特定的层，在训练时切换为训练模式
+		self.scale = RunningScale(cfg) # 用于在策略更新时对Q值标准化
+		self.cfg.iterations += 2*int(cfg.action_dim >= 20) # Heuristic for large action spaces 在动作空间较大时增加MPPI迭代次数
+		self.discount = torch.tensor( # 根据回合长度动态计算折扣因子
 			[self._get_discount(ep_len) for ep_len in cfg.episode_lengths], device='cuda:0'
 		) if self.cfg.multitask else self._get_discount(cfg.episode_length)
 		print('Episode length:', cfg.episode_length)
 		print('Discount factor:', self.discount)
-		self._prev_mean = torch.nn.Buffer(torch.zeros(self.cfg.horizon, self.cfg.action_dim, device=self.device))
-		if cfg.compile:
+		self._prev_mean = torch.nn.Buffer(torch.zeros(self.cfg.horizon, self.cfg.action_dim, device=self.device)) # 用Buffer存储上一时刻的平均动作，作为模型中被使用但不更新的参数
+		if cfg.compile: # 是否使用compile编译_update函数以加速训练
 			print('Compiling update function with torch.compile...')
 			self._update = torch.compile(self._update, mode="reduce-overhead")
 
 	@property
-	def plan(self):
+	def plan(self): # 编译规划函数
 		_plan_val = getattr(self, "_plan_val", None)
 		if _plan_val is not None:
 			return _plan_val
@@ -55,7 +55,7 @@ class TDMPC2(torch.nn.Module):
 		self._plan_val = plan
 		return self._plan_val
 
-	def _get_discount(self, episode_length):
+	def _get_discount(self, episode_length): # 根据回合长度调整折扣因子，回合越长折扣因子越大，以提高视野
 		"""
 		Returns discount factor for a given episode length.
 		Simple heuristic that scales discount linearly with episode length.
@@ -70,7 +70,7 @@ class TDMPC2(torch.nn.Module):
 		frac = episode_length/self.cfg.discount_denom
 		return min(max((frac-1)/(frac), self.cfg.discount_min), self.cfg.discount_max)
 
-	def save(self, fp):
+	def save(self, fp): # 保存模型状态字典到指定路径(这里的状态字典就是模型权重等参数信息）
 		"""
 		Save state dict of the agent to filepath.
 
@@ -79,20 +79,20 @@ class TDMPC2(torch.nn.Module):
 		"""
 		torch.save({"model": self.model.state_dict()}, fp)
 
-	def load(self, fp):
+	def load(self, fp): 
 		"""
 		Load a saved state dict from filepath (or dictionary) into current agent.
 
 		Args:
 			fp (str or dict): Filepath or state dict to load.
 		"""
-		if isinstance(fp, dict):
-			state_dict = fp
+		if isinstance(fp, dict): # 检查输入是否已经是模型字典
+			state_dict = fp # 是就直接读取字典
 		else:
-			state_dict = torch.load(fp, map_location=torch.get_default_device(), weights_only=False)
-		state_dict = state_dict["model"] if "model" in state_dict else state_dict
-		state_dict = api_model_conversion(self.model.state_dict(), state_dict)
-		self.model.load_state_dict(state_dict)
+			state_dict = torch.load(fp, map_location=torch.get_default_device(), weights_only=False) # 不是就从路径加载
+		state_dict = state_dict["model"] if "model" in state_dict else state_dict # 兼容整个字典已经是模型状态和字典中还嵌套一个字典，里面的字典才是模型状态字典两种情况
+		state_dict = api_model_conversion(self.model.state_dict(), state_dict) # 匹配加载模型和实际模型结构差异
+		self.model.load_state_dict(state_dict) # 将加载的模型参数复制到现有模型上
 		return
 
 	@torch.no_grad()
@@ -112,28 +112,28 @@ class TDMPC2(torch.nn.Module):
 		obs = obs.to(self.device, non_blocking=True).unsqueeze(0)
 		if task is not None:
 			task = torch.tensor([task], device=self.device)
-		if self.cfg.mpc:
+		if self.cfg.mpc: # 若配置中MPC为True，就利用MPC规划出的动作作为输出
 			return self.plan(obs, t0=t0, eval_mode=eval_mode, task=task).cpu()
 		z = self.model.encode(obs, task)
-		action, info = self.model.pi(z, task)
+		action, info = self.model.pi(z, task) # 否则用RL训练出的动作
 		if eval_mode:
 			action = info["mean"]
 		return action[0].cpu()
 
-	@torch.no_grad()
-	def _estimate_value(self, z, actions, task):
+	@torch.no_grad() # 奖励离散值需要修改
+	def _estimate_value(self, z, actions, task): # 估计MPC预测时域内的总价值
 		"""Estimate value of a trajectory starting at latent state z and executing given actions."""
-		G, discount = 0, 1
-		termination = torch.zeros(self.cfg.num_samples, 1, dtype=torch.float32, device=z.device)
+		G, discount = 0, 1 # 初始价值和折扣因子
+		termination = torch.zeros(self.cfg.num_samples, 1, dtype=torch.float32, device=z.device) # 初始终止信号
 		for t in range(self.cfg.horizon):
-			reward = math.two_hot_inv(self.model.reward(z, actions[t], task), self.cfg)
-			z = self.model.next(z, actions[t], task)
-			G = G + discount * (1-termination) * reward
+			reward = math.two_hot_inv(self.model.reward(z, actions[t], task), self.cfg) # 计算瞬时离散奖励并将其连续化
+			z = self.model.next(z, actions[t], task) 
+			G = G + discount * (1-termination) * reward 
 			discount_update = self.discount[torch.tensor(task)] if self.cfg.multitask else self.discount
-			discount = discount * discount_update
-			if self.cfg.episodic:
+			discount = discount * discount_update 
+			if self.cfg.episodic: # 若是有限步问题就判断一下当前是否符合终止条件
 				termination = torch.clip(termination + (self.model.termination(z, task) > 0.5).float(), max=1.)
-		action, _ = self.model.pi(z, task)
+		action, _ = self.model.pi(z, task) # 最后一步动作用RL选取，并用Q函数计算未来价值
 		return G + discount * (1-termination) * self.model.Q(z, action, task, return_type='avg')
 
 	@torch.no_grad()
@@ -150,7 +150,7 @@ class TDMPC2(torch.nn.Module):
 		Returns:
 			torch.Tensor: Action to take in the environment.
 		"""
-		# Sample policy trajectories
+		# Sample policy trajectories 从RL策略网络中采样轨迹
 		z = self.model.encode(obs, task)
 		if self.cfg.num_pi_trajs > 0:
 			pi_actions = torch.empty(self.cfg.horizon, self.cfg.num_pi_trajs, self.cfg.action_dim, device=self.device)
@@ -160,7 +160,7 @@ class TDMPC2(torch.nn.Module):
 				_z = self.model.next(_z, pi_actions[t], task)
 			pi_actions[-1], _ = self.model.pi(_z, task)
 
-		# Initialize state and parameters
+		# Initialize state and parameters 利用MPPI的均值和方差采样轨迹
 		z = z.repeat(self.cfg.num_samples, 1)
 		mean = torch.zeros(self.cfg.horizon, self.cfg.action_dim, device=self.device)
 		std = torch.full((self.cfg.horizon, self.cfg.action_dim), self.cfg.max_std, dtype=torch.float, device=self.device)
@@ -178,15 +178,16 @@ class TDMPC2(torch.nn.Module):
 			actions_sample = mean.unsqueeze(1) + std.unsqueeze(1) * r
 			actions_sample = actions_sample.clamp(-1, 1)
 			actions[:, self.cfg.num_pi_trajs:] = actions_sample
+			# 多任务中还要添加动作掩码
 			if self.cfg.multitask:
 				actions = actions * self.model._action_masks[task]
 
-			# Compute elite actions
-			value = self._estimate_value(z, actions, task).nan_to_num(0)
+			# Compute elite actions 利用价值函数评估动作价值
+			value = self._estimate_value(z, actions, task).nan_to_num(0) # nan_to_num(0)方法将tensor中的nan值全部替换成0，并将正无穷和负无穷值替换为该数据类型能表示的最大/最小值，以增强算法稳定性
 			elite_idxs = torch.topk(value.squeeze(1), self.cfg.num_elites, dim=0).indices
 			elite_value, elite_actions = value[elite_idxs], actions[:, elite_idxs]
 
-			# Update parameters
+			# Update parameters 根据精英轨迹更新MPPI的均值和方差
 			max_value = elite_value.max(0).values
 			score = torch.exp(self.cfg.temperature*(elite_value - max_value))
 			score = score / score.sum(0)
@@ -197,13 +198,13 @@ class TDMPC2(torch.nn.Module):
 				mean = mean * self.model._action_masks[task]
 				std = std * self.model._action_masks[task]
 
-		# Select action
-		rand_idx = math.gumbel_softmax_sample(score.squeeze(1))
+		# Select action 选择最终动作
+		rand_idx = math.gumbel_softmax_sample(score.squeeze(1)) # 在得分最高的n条轨迹中把它们的得分当作采样权重进行采样，最终能选取的是一条独立轨迹而不是所有轨迹的平均
 		actions = torch.index_select(elite_actions, 1, rand_idx).squeeze(1)
 		a, std = actions[0], std[0]
-		if not eval_mode:
+		if not eval_mode: # 若非评估模式，则在动作上添加噪声以增加探索
 			a = a + std * torch.randn(self.cfg.action_dim, device=std.device)
-		self._prev_mean.copy_(mean)
+		self._prev_mean.copy_(mean) # 保存当前均值序列以供下一时刻使用
 		return a.clamp(-1, 1)
 
 	def update_pi(self, zs, task):
@@ -218,15 +219,16 @@ class TDMPC2(torch.nn.Module):
 			float: Loss of the policy update.
 		"""
 		action, info = self.model.pi(zs, task)
-		qs = self.model.Q(zs, action, task, return_type='avg', detach=True)
+		qs = self.model.Q(zs, action, task, return_type='avg', detach=True) # 计算价值函数Q，return_type='avg'是求解多个Q函数的均值防止高估
 		self.scale.update(qs[0])
-		qs = self.scale(qs)
+		qs = self.scale(qs) # 对Q进行归一化
 
 		# Loss is a weighted sum of Q-values
-		rho = torch.pow(self.cfg.rho, torch.arange(len(qs), device=self.device))
-		pi_loss = (-(self.cfg.entropy_coef * info["scaled_entropy"] + qs).mean(dim=(1,2)) * rho).mean()
+		rho = torch.pow(self.cfg.rho, torch.arange(len(qs), device=self.device)) # 时间权重，越远的时间步在计算损失函数时权重越小
+		pi_loss = (-(self.cfg.entropy_coef * info["scaled_entropy"] + qs).mean(dim=(1,2)) * rho).mean() # 计算损失函数，价值和熵的权重系数不是时变的
+		# 梯度反向传播
 		pi_loss.backward()
-		pi_grad_norm = torch.nn.utils.clip_grad_norm_(self.model._pi.parameters(), self.cfg.grad_clip_norm)
+		pi_grad_norm = torch.nn.utils.clip_grad_norm_(self.model._pi.parameters(), self.cfg.grad_clip_norm) # 梯度裁剪
 		self.pi_optim.step()
 		self.pi_optim.zero_grad(set_to_none=True)
 
@@ -264,9 +266,9 @@ class TDMPC2(torch.nn.Module):
 			td_targets = self._td_target(next_z, reward, terminated, task)
 
 		# Prepare for update
-		self.model.train()
+		self.model.train() # 模型切换回训练模式，启用dropout和batchnorm等训练技巧
 
-		# Latent rollout
+		# Latent rollout 前向传播预测潜在变量
 		zs = torch.empty(self.cfg.horizon+1, self.cfg.batch_size, self.cfg.latent_dim, device=self.device)
 		z = self.model.encode(obs[0], task)
 		zs[0] = z
@@ -276,7 +278,7 @@ class TDMPC2(torch.nn.Module):
 			consistency_loss = consistency_loss + F.mse_loss(z, _next_z) * self.cfg.rho**t
 			zs[t+1] = z
 
-		# Predictions
+		# Predictions 预测回合结束指标
 		_zs = zs[:-1]
 		qs = self.model.Q(_zs, action, task, return_type='all')
 		reward_preds = self.model.reward(_zs, action, task)
@@ -286,13 +288,13 @@ class TDMPC2(torch.nn.Module):
 		# Compute losses
 		reward_loss, value_loss = 0, 0
 		for t, (rew_pred_unbind, rew_unbind, td_targets_unbind, qs_unbind) in enumerate(zip(reward_preds.unbind(0), reward.unbind(0), td_targets.unbind(0), qs.unbind(1))):
-			reward_loss = reward_loss + math.soft_ce(rew_pred_unbind, rew_unbind, self.cfg).mean() * self.cfg.rho**t
+			reward_loss = reward_loss + math.soft_ce(rew_pred_unbind, rew_unbind, self.cfg).mean() * self.cfg.rho**t # 计算离散奖励的交叉熵损失
 			for _, qs_unbind_unbind in enumerate(qs_unbind.unbind(0)):
 				value_loss = value_loss + math.soft_ce(qs_unbind_unbind, td_targets_unbind, self.cfg).mean() * self.cfg.rho**t
 
 		consistency_loss = consistency_loss / self.cfg.horizon
 		reward_loss = reward_loss / self.cfg.horizon
-		if self.cfg.episodic:
+		if self.cfg.episodic: # 终止信号预测差距的损失
 			termination_loss = F.binary_cross_entropy_with_logits(termination_pred, terminated)
 		else:
 			termination_loss = 0.
