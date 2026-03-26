@@ -1,4 +1,4 @@
-from copy import deepcopy
+from copy import deepcopy # 深度拷贝，主要用于复制Q网络以创建目标网络
 
 import torch
 import torch.nn as nn
@@ -18,24 +18,28 @@ class WorldModel(nn.Module):
 		super().__init__()
 		self.cfg = cfg
 		if cfg.multitask:
-			self._task_emb = nn.Embedding(len(cfg.tasks), cfg.task_dim, max_norm=1)
-			self.register_buffer("_action_masks", torch.zeros(len(cfg.tasks), cfg.action_dim))
+			self._task_emb = nn.Embedding(len(cfg.tasks), cfg.task_dim, max_norm=1) # 任务嵌入，最大范数为1
+			self.register_buffer("_action_masks", torch.zeros(len(cfg.tasks), cfg.action_dim)) # 动作掩码
 			for i in range(len(cfg.tasks)):
 				self._action_masks[i, :cfg.action_dims[i]] = 1.
 		self._encoder = layers.enc(cfg)
-		self._dynamics = layers.mlp(cfg.latent_dim + cfg.action_dim + cfg.task_dim, 2*[cfg.mlp_dim], cfg.latent_dim, act=layers.SimNorm(cfg))
-		self._reward = layers.mlp(cfg.latent_dim + cfg.action_dim + cfg.task_dim, 2*[cfg.mlp_dim], max(cfg.num_bins, 1))
+		self._dynamics = layers.mlp(cfg.latent_dim + cfg.action_dim + cfg.task_dim, 2*[cfg.mlp_dim], cfg.latent_dim, act=layers.SimNorm(cfg)) # act参数传入激活函数，2*[cfg.mlp_dim]代表两层每层维度为cfg.mlp_dim的隐藏层
+		# self._reward = layers.mlp(cfg.latent_dim + cfg.action_dim + cfg.task_dim, 2*[cfg.mlp_dim], max(cfg.num_bins, 1))
+		reward_dim = 1 if cfg.get('continuous_reward', False) else max(cfg.num_bins, 1)
+		self._reward = layers.mlp(cfg.latent_dim + cfg.action_dim + cfg.task_dim, 2*[cfg.mlp_dim], reward_dim)
 		self._termination = layers.mlp(cfg.latent_dim + cfg.task_dim, 2*[cfg.mlp_dim], 1) if cfg.episodic else None
 		self._pi = layers.mlp(cfg.latent_dim + cfg.task_dim, 2*[cfg.mlp_dim], 2*cfg.action_dim)
-		self._Qs = layers.Ensemble([layers.mlp(cfg.latent_dim + cfg.action_dim + cfg.task_dim, 2*[cfg.mlp_dim], max(cfg.num_bins, 1), dropout=cfg.dropout) for _ in range(cfg.num_q)])
+		# self._Qs = layers.Ensemble([layers.mlp(cfg.latent_dim + cfg.action_dim + cfg.task_dim, 2*[cfg.mlp_dim], max(cfg.num_bins, 1), dropout=cfg.dropout) for _ in range(cfg.num_q)])
+		self._Qs = layers.Ensemble([layers.mlp(cfg.latent_dim + cfg.action_dim + cfg.task_dim, 2*[cfg.mlp_dim], reward_dim, dropout=cfg.dropout) for _ in range(cfg.num_q)])
 		self.apply(init.weight_init)
-		init.zero_([self._reward[-1].weight, self._Qs.params["2", "weight"]])
+		if not cfg.get('continuous_reward', False):
+			init.zero_([self._reward[-1].weight, self._Qs.params["2", "weight"]]) # 将奖励函数和Q函数的最后一层权重初始化为0，以稳定训练初期的训练
 
 		self.register_buffer("log_std_min", torch.tensor(cfg.log_std_min))
 		self.register_buffer("log_std_dif", torch.tensor(cfg.log_std_max) - self.log_std_min)
 		self.init()
 
-	def init(self):
+	def init(self): # 创建目标Q网络
 		# Create params
 		self._detach_Qs_params = TensorDictParams(self._Qs.params.data, no_convert=True)
 		self._target_Qs_params = TensorDictParams(self._Qs.params.data.clone(), no_convert=True)
@@ -141,7 +145,7 @@ class WorldModel(nn.Module):
 		return torch.sigmoid(self._termination(z))
 		
 
-	def pi(self, z, task):
+	def pi(self, z, task): # 策略网络也要限幅，范围[-1，1]
 		"""
 		Samples an action from the policy prior.
 		The policy prior is a Gaussian distribution with
@@ -151,11 +155,11 @@ class WorldModel(nn.Module):
 			z = self.task_emb(z, task)
 
 		# Gaussian policy prior
-		mean, log_std = self._pi(z).chunk(2, dim=-1)
-		log_std = math.log_std(log_std, self.log_std_min, self.log_std_dif)
+		mean, log_std = self._pi(z).chunk(2, dim=-1) # 将输出平均切分成两部分
+		log_std = math.log_std(log_std, self.log_std_min, self.log_std_dif) # 限制标准差范围
 		eps = torch.randn_like(mean)
 
-		if self.cfg.multitask: # Mask out unused action dimensions
+		if self.cfg.multitask: # Mask out unused action dimensions 添加动作掩码
 			mean = mean * self._action_masks[task]
 			log_std = log_std * self._action_masks[task]
 			eps = eps * self._action_masks[task]
@@ -163,15 +167,15 @@ class WorldModel(nn.Module):
 		else: # No masking
 			action_dims = None
 
-		log_prob = math.gaussian_logprob(eps, log_std)
+		log_prob = math.gaussian_logprob(eps, log_std) # 计算重参数化采样后，tanh变换前的高斯分布动作的对数概率
 
 		# Scale log probability by action dimensions
 		size = eps.shape[-1] if action_dims is None else action_dims
-		scaled_log_prob = log_prob * size
+		scaled_log_prob = log_prob * size # 熵在原来基础上又乘了一遍动作维数，使维数越大越鼓励探索
 
 		# Reparameterization trick
 		action = mean + eps * log_std.exp()
-		mean, action, log_prob = math.squash(mean, action, log_prob)
+		mean, action, log_prob = math.squash(mean, action, log_prob) # 动作进行tanh变换，并修正概率分布
 
 		entropy_scale = scaled_log_prob / (log_prob + 1e-8)
 		info = TensorDict({
@@ -210,7 +214,9 @@ class WorldModel(nn.Module):
 			return out
 
 		qidx = torch.randperm(self.cfg.num_q, device=out.device)[:2]
-		Q = math.two_hot_inv(out[qidx], self.cfg)
+		Q = out[qidx]
+		if not self.cfg.get('continuous_reward', False):
+			Q = math.two_hot_inv(Q, self.cfg)
 		if return_type == "min":
 			return Q.min(0).values
 		return Q.sum(0) / 2

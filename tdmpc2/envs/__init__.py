@@ -9,6 +9,14 @@ from envs.wrappers.tensor import TensorWrapper
 def missing_dependencies(task):
 	raise ValueError(f'Missing dependencies for task {task}; install dependencies to use this environment.')
 
+# 自己的环境
+try:
+    from envs.panda_env import make_env as make_panda_env
+# except:
+#     make_panda_env = missing_dependencies
+except Exception as e: 
+	print("import panda_env failed:", e) 
+	make_panda_env = missing_dependencies
 try:
 	from envs.dmcontrol import make_env as make_dm_control_env
 except:
@@ -65,7 +73,7 @@ def make_env(cfg):
 
 	else:
 		env = None
-		for fn in [make_dm_control_env, make_maniskill_env, make_metaworld_env, make_myosuite_env, make_mujoco_env]:
+		for fn in [make_panda_env, make_dm_control_env, make_maniskill_env, make_metaworld_env, make_myosuite_env, make_mujoco_env]:
 			try:
 				env = fn(cfg)
 			except ValueError:
@@ -78,6 +86,7 @@ def make_env(cfg):
 	except: # Box
 		cfg.obs_shape = {cfg.get('obs', 'state'): env.observation_space.shape}
 	cfg.action_dim = env.action_space.shape[0]
-	cfg.episode_length = env.max_episode_steps
+	# cfg.episode_length = env.max_episode_steps
+	cfg.episode_length = env.max_episode_time
 	cfg.seed_steps = max(1000, 5*cfg.episode_length)
 	return env

@@ -126,7 +126,9 @@ class TDMPC2(torch.nn.Module):
 		G, discount = 0, 1 # 初始价值和折扣因子
 		termination = torch.zeros(self.cfg.num_samples, 1, dtype=torch.float32, device=z.device) # 初始终止信号
 		for t in range(self.cfg.horizon):
-			reward = math.two_hot_inv(self.model.reward(z, actions[t], task), self.cfg) # 计算瞬时离散奖励并将其连续化
+			reward = self.model.reward(z, actions[t], task)
+			if not self.cfg.get('continuous_reward', False):
+				reward = math.two_hot_inv(reward, self.cfg) # 计算瞬时离散奖励并将其连续化
 			z = self.model.next(z, actions[t], task) 
 			G = G + discount * (1-termination) * reward 
 			discount_update = self.discount[torch.tensor(task)] if self.cfg.multitask else self.discount
@@ -278,7 +280,7 @@ class TDMPC2(torch.nn.Module):
 			consistency_loss = consistency_loss + F.mse_loss(z, _next_z) * self.cfg.rho**t
 			zs[t+1] = z
 
-		# Predictions 预测回合结束指标
+		# Predictions 预测回合结束指标学习，用于在episodic环境中MPC前向预测时判断当前的终止情况
 		_zs = zs[:-1]
 		qs = self.model.Q(_zs, action, task, return_type='all')
 		reward_preds = self.model.reward(_zs, action, task)
@@ -287,10 +289,15 @@ class TDMPC2(torch.nn.Module):
 
 		# Compute losses
 		reward_loss, value_loss = 0, 0
-		for t, (rew_pred_unbind, rew_unbind, td_targets_unbind, qs_unbind) in enumerate(zip(reward_preds.unbind(0), reward.unbind(0), td_targets.unbind(0), qs.unbind(1))):
-			reward_loss = reward_loss + math.soft_ce(rew_pred_unbind, rew_unbind, self.cfg).mean() * self.cfg.rho**t # 计算离散奖励的交叉熵损失
-			for _, qs_unbind_unbind in enumerate(qs_unbind.unbind(0)):
-				value_loss = value_loss + math.soft_ce(qs_unbind_unbind, td_targets_unbind, self.cfg).mean() * self.cfg.rho**t
+		if self.cfg.get('continuous_reward', False):
+			for t in range(self.cfg.horizon):
+				reward_loss += F.mse_loss(reward_preds[t], reward[t]) * self.cfg.rho**t
+				value_loss += F.mse_loss(qs[:, t], td_targets[t].unsqueeze(0).repeat(self.cfg.num_q, 1, 1)) * self.cfg.rho**t
+		else:
+			for t, (rew_pred_unbind, rew_unbind, td_targets_unbind, qs_unbind) in enumerate(zip(reward_preds.unbind(0), reward.unbind(0), td_targets.unbind(0), qs.unbind(1))):
+				reward_loss = reward_loss + math.soft_ce(rew_pred_unbind, rew_unbind, self.cfg).mean() * self.cfg.rho**t # 计算离散奖励的交叉熵损失
+				for _, qs_unbind_unbind in enumerate(qs_unbind.unbind(0)):
+					value_loss = value_loss + math.soft_ce(qs_unbind_unbind, td_targets_unbind, self.cfg).mean() * self.cfg.rho**t
 
 		consistency_loss = consistency_loss / self.cfg.horizon
 		reward_loss = reward_loss / self.cfg.horizon

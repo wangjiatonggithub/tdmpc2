@@ -4,7 +4,7 @@ defaults:
 # environment
 task: dog-run
 obs: state
-episodic: false
+episodic: true # false
 
 # evaluation
 checkpoint: ???
@@ -64,8 +64,8 @@ dropout: 0.01
 simnorm_dim: 8
 
 # logging
-wandb_project: ???
-wandb_entity: ???
+wandb_project: "tdmpc2-panda-project"
+wandb_entity: "1174960541-harbin-institute-of-technology"
 wandb_silent: false
 enable_wandb: true
 save_csv: true
@@ -75,6 +75,7 @@ compile: false # true
 save_video: true
 save_agent: true
 seed: 1
+continuous_reward: true # 使用连续奖励
 
 # convenience
 work_dir: ???
@@ -89,3 +90,12 @@ action_dims: ???
 episode_lengths: ???
 seed_steps: ???
 bin_size: ???
+
+visualize: False
+obstacle_type: 'box'
+obstacle_randomize_pos: True
+randomize_init_qpos: True
+randomize_goal_pos: True
+max_episode_time: 20.0
+pause_on_collision: False
+initial_pause_s: 0
