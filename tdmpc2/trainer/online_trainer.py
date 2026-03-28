@@ -27,11 +27,13 @@ class OnlineTrainer(Trainer):
 
 	def eval(self):
 		"""Evaluate a TD-MPC2 agent."""
+		video_eval_freq = int(self.cfg.get('video_eval_freq', 0))
+		video_enabled = self.cfg.save_video and (video_eval_freq <= 0 or self._step % video_eval_freq == 0)
 		ep_rewards, ep_successes, ep_lengths = [], [], []
 		for i in range(self.cfg.eval_episodes):
 			obs, done, ep_reward, t = self.env.reset(), False, 0, 0
 			if self.cfg.save_video:
-				self.logger.video.init(self.env, enabled=(i==0))
+				self.logger.video.init(self.env, enabled=(i==0 and video_enabled))
 			while not done:
 				torch.compiler.cudagraph_mark_step_begin()
 				action = self.agent.act(obs, t0=t==0, eval_mode=True)
@@ -43,7 +45,7 @@ class OnlineTrainer(Trainer):
 			ep_rewards.append(ep_reward)
 			ep_successes.append(info['success'])
 			ep_lengths.append(t)
-			if self.cfg.save_video:
+			if self.cfg.save_video and video_enabled:
 				self.logger.video.save(self._step)
 		return dict(
 			episode_reward=np.nanmean(ep_rewards),
@@ -76,18 +78,23 @@ class OnlineTrainer(Trainer):
 		train_metrics, done, eval_next = {}, True, False
 		while self._step <= self.cfg.steps:
 			# Evaluate agent periodically 每隔一定步数进行一次模型评估
+			# print(self._step)
 			if self._step % self.cfg.eval_freq == 0:
 				eval_next = True
-
+			if self._step==0:
+				eval_next = False
 			# Reset environment
 			if done:
+				# print("进入done")
 				if eval_next:
+					# print("进入eval")
 					eval_metrics = self.eval()
 					eval_metrics.update(self.common_metrics())
 					self.logger.log(eval_metrics, 'eval')
 					eval_next = False
 
 				if self._step > 0: # 记录上一条轨迹信息
+					# print("记录上一条轨迹信息")
 					if info['terminated'] and not self.cfg.episodic:
 						raise ValueError('Termination detected but you are not in episodic mode. ' \
 						'Set `episodic=true` to enable support for terminations.')
@@ -99,16 +106,27 @@ class OnlineTrainer(Trainer):
 					train_metrics.update(self.common_metrics()) 
 					self.logger.log(train_metrics, 'train')
 					self._ep_idx = self.buffer.add(torch.cat(self._tds)) # 存储整条轨迹的各种信息，包括观测、动作、奖励等
+					# print("创建buffer")
 
+				# _t0 = time()
+				# print("进入环境重置")
 				obs = self.env.reset()
+				# print(f"[debug] env.reset took {time() - _t0:.3f}s")
 				self._tds = [self.to_td(obs)]
 
 			# Collect experience 采集一定步数数据后开始使用策略网络生成动作而不是随机生成
+			# print(self.cfg.seed_steps)
 			if self._step > self.cfg.seed_steps:
+				_t0 = time()
 				action = self.agent.act(obs, t0=len(self._tds)==1)
+				if self._step < 3:
+					print(f"[debug] agent.act took {time() - _t0:.3f}s")
 			else:
 				action = self.env.rand_act()
+			# _t0 = time()
 			obs, reward, done, info = self.env.step(action)
+			# if self._step < 3:
+			# 	print(f"[debug] env.step took {time() - _t0:.3f}s")
 			self._tds.append(self.to_td(obs, action, reward, info['terminated']))
 
 			# Update agent 更新网络

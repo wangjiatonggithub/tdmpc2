@@ -37,7 +37,7 @@ def make_env(cfg):
     ) # 实例化你自己的环境
     env = PandaTDMPC2Wrapper(env, cfg)
     # 必须包装 Timeout，TD-MPC2 依赖此包装器来处理最大步数
-    env = Timeout(env, max_episode_steps=cfg.get('episode_length', 10000))
+    env = Timeout(env, max_episode_steps=10000)
     
     # 从创建好的环境中获取观测和动作空间信息，并更新cfg
     cfg.obs_shape = env.observation_space.shape

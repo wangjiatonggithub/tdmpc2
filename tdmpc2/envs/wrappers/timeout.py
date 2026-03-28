@@ -21,5 +21,10 @@ class Timeout(gym.Wrapper):
 	def step(self, action):
 		obs, reward, done, info = self.env.step(action)
 		self._t += 1
+		# print(done)
+		# print(self._t)
+		# print(self.max_episode_steps)
+		# print(done)
 		done = done or self._t >= self.max_episode_steps
+		# print(done)
 		return obs, reward, done, info

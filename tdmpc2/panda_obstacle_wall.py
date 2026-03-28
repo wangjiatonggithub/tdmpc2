@@ -205,7 +205,10 @@ class PandaObstacleEnv(gym.Env):
                 self.renderer = mujoco.Renderer(self.model, height=height, width=width)
             
             # 更新渲染器中的物理状态
-            self.renderer.update_scene(self.data, camera=camera_name or camera_id)
+            camera = camera_name if camera_name is not None else camera_id
+            if camera is None:
+                camera = -1
+            self.renderer.update_scene(self.data, camera=camera)
             # 返回 RGB 数组
             return self.renderer.render()
 

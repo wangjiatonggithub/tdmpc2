@@ -1,4 +1,5 @@
 import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 # os.environ['MUJOCO_GL'] = os.getenv("MUJOCO_GL", 'egl')
 os.environ['MUJOCO_GL'] = os.getenv('MUJOCO_GL', 'osmesa') 
 os.environ['LAZY_LEGACY_OP'] = '0'
@@ -19,6 +20,8 @@ from tdmpc2 import TDMPC2
 from trainer.offline_trainer import OfflineTrainer
 from trainer.online_trainer import OnlineTrainer
 from common.logger import Logger
+import torch._dynamo
+torch._dynamo.config.suppress_errors = True
 
 torch.backends.cudnn.benchmark = True
 torch.set_float32_matmul_precision('high')
