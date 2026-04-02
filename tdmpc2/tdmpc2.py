@@ -110,6 +110,7 @@ class TDMPC2(torch.nn.Module):
 			torch.Tensor: Action to take in the environment.
 		"""
 		obs = obs.to(self.device, non_blocking=True).unsqueeze(0)
+		print("device:", obs.device)
 		if task is not None:
 			task = torch.tensor([task], device=self.device)
 		if self.cfg.mpc: # 若配置中MPC为True，就利用MPC规划出的动作作为输出

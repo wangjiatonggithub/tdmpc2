@@ -58,7 +58,7 @@
         rgba="0.300 0.300 0.300 0.800" 
       />
     </body>  -->
-    <body name="obstacle_box">  
+    <!-- <body name="obstacle_box">  
       <geom name="obstacle_u_left" 
         type="box" 
         size="0.010 0.080 0.30" 
@@ -81,6 +81,35 @@
         type="box" 
         size="0.60 0.01 0.30" 
         pos="0.300 0.370 0.300" 
+        contype="1" 
+        conaffinity="1" 
+        mass="0.067" 
+        rgba="0.300 0.300 0.300 0.800" 
+      />
+    </body> -->
+    <body name="obstacle_box">  
+      <geom name="obstacle_u_left" 
+        type="box" 
+        size="0.010 0.080 0.30" 
+        pos="-0.3 0.3 -10" 
+        contype="1" 
+        conaffinity="1" 
+        mass="0.067" 
+        rgba="0.300 0.300 0.300 0.800" 
+      />
+      <geom name="obstacle_u_right" 
+        type="box" 
+        size="0.010 0.080 0.30" 
+        pos="0.90 0.3 -10" 
+        contype="1" 
+        conaffinity="1" 
+        mass="0.067" 
+        rgba="0.300 0.300 0.300 0.800" 
+      />
+      <geom name="obstacle_u_base" 
+        type="box" 
+        size="0.60 0.01 0.30" 
+        pos="0.300 0.370 -10" 
         contype="1" 
         conaffinity="1" 
         mass="0.067" 

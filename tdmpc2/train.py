@@ -1,5 +1,5 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 # os.environ['MUJOCO_GL'] = os.getenv("MUJOCO_GL", 'egl')
 os.environ['MUJOCO_GL'] = os.getenv('MUJOCO_GL', 'osmesa') 
 os.environ['LAZY_LEGACY_OP'] = '0'
