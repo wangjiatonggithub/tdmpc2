@@ -46,7 +46,7 @@ dependencies:
     ####################
     # ManiSkill2:
     # (requires gym==0.21.0 which occasionally breaks)
-    # - mani-skill2==0.4.1
+    - mani-skill2==0.4.1
     ####################
     # Meta-World:
     # (requires gym==0.21.0 which occasionally breaks)

@@ -27,7 +27,8 @@ class OfflineTrainer(Trainer):
 			for _ in range(self.cfg.eval_episodes):
 				obs, done, ep_reward, t = self.env.reset(task_idx), False, 0, 0
 				while not done:
-					torch.compiler.cudagraph_mark_step_begin()
+					# torch.compiler.cudagraph_mark_step_begin()
+					# Env interaction returns CPU actions; skip cudagraph mark to avoid warnings.
 					action = self.agent.act(obs, t0=t==0, eval_mode=True, task=task_idx)
 					obs, reward, done, info = self.env.step(action)
 					ep_reward += reward
@@ -75,7 +76,7 @@ class OfflineTrainer(Trainer):
 		for i in range(self.cfg.steps):
 
 			# Update agent
-			train_metrics = self.agent.update(self.buffer)
+			train_metrics = self.agent.update(self.buffer, step=i)
 
 			# Evaluate agent periodically
 			if i % self.cfg.eval_freq == 0 or i % 10_000 == 0:

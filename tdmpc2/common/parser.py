@@ -67,7 +67,7 @@ def parse_cfg(cfg: OmegaConf) -> OmegaConf:
 		if cfg.task == 'mt30' and cfg.model_size == 19:
 			cfg.latent_dim = 512 # This checkpoint is slightly smaller
 
-	# Multi-task
+	# Multi-task 在这里更改的任务维数和是否为多任务的标记变量
 	cfg.multitask = cfg.task in TASK_SET.keys()
 	if cfg.multitask:
 		cfg.task_title = cfg.task.upper() # 将任务名称变为大写

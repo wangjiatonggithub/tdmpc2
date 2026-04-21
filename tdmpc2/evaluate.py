@@ -1,5 +1,6 @@
 import os
-os.environ['MUJOCO_GL'] = os.getenv("MUJOCO_GL", 'egl')
+# os.environ['MUJOCO_GL'] = os.getenv("MUJOCO_GL", 'egl')
+os.environ['MUJOCO_GL'] = os.getenv('MUJOCO_GL', 'osmesa') 
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -65,6 +66,7 @@ def evaluate(cfg: dict): # 函数传递的cfg字典由hdrya自动从config.yaml�
 		print(colored(f'Evaluating agent on {cfg.task}:', 'yellow', attrs=['bold']))
 	if cfg.save_video:
 		video_dir = os.path.join(cfg.work_dir, 'videos')
+		print(video_dir)
 		os.makedirs(video_dir, exist_ok=True)
 	scores = []
 	tasks = cfg.tasks if cfg.multitask else [cfg.task]
@@ -74,18 +76,18 @@ def evaluate(cfg: dict): # 函数传递的cfg字典由hdrya自动从config.yaml�
 		ep_rewards, ep_successes = [], []
 		for i in range(cfg.eval_episodes):
 			obs, done, ep_reward, t = env.reset(task_idx=task_idx), False, 0, 0
-			if cfg.save_video:
+			if cfg.save_video and i == 0:
 				frames = [env.render()]
 			while not done:
 				action = agent.act(obs, t0=t==0, task=task_idx)
 				obs, reward, done, info = env.step(action)
 				ep_reward += reward
 				t += 1
-				if cfg.save_video:
+				if cfg.save_video and i == 0:
 					frames.append(env.render())
 			ep_rewards.append(ep_reward)
-			ep_successes.append(info['success'])
-			if cfg.save_video:
+			ep_successes.append(info['is_success'])
+			if cfg.save_video and i == 0:
 				imageio.mimsave(
 					os.path.join(video_dir, f'{task}-{i}.mp4'), frames, fps=15)
 		ep_rewards = np.mean(ep_rewards)

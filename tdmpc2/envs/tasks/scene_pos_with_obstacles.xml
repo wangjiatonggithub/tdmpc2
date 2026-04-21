@@ -25,6 +25,8 @@
       <geom name="Z" type="cylinder" size="0.005" fromto="0 0 0 0 0 0.3" rgba="0 0 1 1" contype="0" conaffinity="0" />
     </body>
 
+    <camera name="global_cam" pos="0 1.5 1.5" euler="-45 0 0" fovy="90"/>
+    
     <!-- <body name="obstacle_sphere">  
       <geom name="obstacle_sphere" 
         type="sphere" 

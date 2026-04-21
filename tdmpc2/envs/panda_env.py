@@ -19,7 +19,7 @@ class PandaTDMPC2Wrapper(gym.Wrapper):
         obs, reward, terminated, truncated, info = self.env.step(action)
         done = terminated or truncated
         # TD-MPC2 需要 info 中包含 success（可选）
-        info['success'] = info.get('success', False) 
+        info['is_success'] = info.get('is_success', False)
         return obs.astype(np.float32), reward, done, info
 
 def make_env(cfg):
@@ -28,19 +28,19 @@ def make_env(cfg):
     env = PandaObstacleEnv(
         visualize = cfg.get('visualize', False),
         obstacle_type = cfg.get('obstacle_type', 'box'),
-        obstacle_randomize_pos = cfg.get('obstacle_randomize_pos', True),
-        randomize_init_qpos = cfg.get('randomize_init_qpos', True),
-        randomize_goal_pos = cfg.get('randomize_goal_pos', True),
+        obstacle_randomize_pos = cfg.get('obstacle_randomize_pos', False),
+        randomize_init_qpos = cfg.get('randomize_init_qpos', False),
+        randomize_goal_pos = cfg.get('randomize_goal_pos', False),
         max_episode_time = cfg.get('max_episode_time', 20.0),
         pause_on_collision = cfg.get('pause_on_collision', False),
         initial_pause_s = cfg.get('initial_pause_s', 0),
     ) # 实例化你自己的环境
     env = PandaTDMPC2Wrapper(env, cfg)
     # 必须包装 Timeout，TD-MPC2 依赖此包装器来处理最大步数
-    env = Timeout(env, max_episode_steps=10000)
+    env = Timeout(env, max_episode_steps=501)
     
     # 从创建好的环境中获取观测和动作空间信息，并更新cfg
     cfg.obs_shape = env.observation_space.shape
     cfg.action_dim = env.action_space.shape[0]
-
+    # print(cfg.action_dim)
     return env

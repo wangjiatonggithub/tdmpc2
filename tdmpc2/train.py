@@ -25,7 +25,8 @@ torch._dynamo.config.suppress_errors = True
 
 torch.backends.cudnn.benchmark = True
 torch.set_float32_matmul_precision('high')
-
+import setproctitle
+setproctitle.setproctitle("python train_myself.py")
 
 @hydra.main(config_name='config', config_path='.')
 def train(cfg: dict):
@@ -49,15 +50,22 @@ def train(cfg: dict):
 	"""
 	assert torch.cuda.is_available()
 	assert cfg.steps > 0, 'Must train for at least 1 step.'
-	cfg = parse_cfg(cfg)
+	cfg = parse_cfg(cfg) # 在这里判断的是否为多任务
 	set_seed(cfg.seed)
 	print(colored('Work dir:', 'yellow', attrs=['bold']), cfg.work_dir)
+
+	# print("multitask", cfg.multitask)
+	env = make_env(cfg)
+	agent = TDMPC2(cfg) # 加载现有模型继续训练
+	if cfg.checkpoint != '???':
+		print(colored(f'Loading checkpoint from {cfg.checkpoint}', 'yellow', attrs=['bold']))
+		agent.load(cfg.checkpoint)
 
 	trainer_cls = OfflineTrainer if cfg.multitask else OnlineTrainer
 	trainer = trainer_cls(
 		cfg=cfg,
-		env=make_env(cfg),
-		agent=TDMPC2(cfg),
+		env=env,
+		agent=agent,
 		buffer=Buffer(cfg),
 		logger=Logger(cfg),
 	)

@@ -83,6 +83,11 @@ class SimNorm(nn.Module):
 
 	def forward(self, x):
 		shp = x.shape
+		last_dim = shp[-1]
+		if last_dim % self.dim != 0:
+			# Fallback: apply softmax over the last dimension when it can't be
+			# evenly partitioned into simplices.
+			return F.softmax(x, dim=-1)
 		x = x.view(*shp[:-1], -1, self.dim)
 		x = F.softmax(x, dim=-1)
 		return x.view(*shp)

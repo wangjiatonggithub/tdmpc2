@@ -4,11 +4,11 @@ defaults:
 # environment
 task: dog-run
 obs: state
-episodic: false
+episodic: true
 
 # evaluation
 checkpoint: ???
-eval_episodes: 10
+eval_episodes: 50
 eval_freq: 50000
 
 # training
@@ -16,7 +16,7 @@ steps: 10_000_000
 batch_size: 256
 reward_coef: 0.1
 value_coef: 0.1
-termination_coef: 1
+termination_coef: 0
 consistency_coef: 20
 rho: 0.5
 lr: 3e-4
@@ -29,11 +29,16 @@ discount_max: 0.995
 buffer_size: 1_000_000
 exp_name: default
 data_dir: ???
+save_freq: 100000 # Model saving frequency
+scale_threshold: 2
+prior_coef: 1.0
+regularize: false
+time_regularize: false
 
 # planning
 mpc: true
 iterations: 6
-num_samples: 256 # 512
+num_samples: 512
 num_elites: 64
 num_pi_trajs: 24
 horizon: 3
@@ -73,10 +78,10 @@ save_csv: true
 # misc
 compile: true # true
 save_video: true
-video_eval_freq: 10000000
+video_eval_freq: 1000
 save_agent: true
 seed: 1
-continuous_reward: true # 使用连续奖励
+continuous_reward: false # 使用连续奖励
 
 # convenience
 work_dir: ???
@@ -89,14 +94,15 @@ episode_length: ???
 obs_shapes: ???
 action_dims: ???
 episode_lengths: ???
-seed_steps: 10001 # 5000
+seed_steps: 100001 # 5000
 bin_size: ???
 
 visualize: False
 obstacle_type: 'box'
-obstacle_randomize_pos: True
-randomize_init_qpos: True
-randomize_goal_pos: True
+obstacle_randomize_pos: False # True
+randomize_init_qpos: True # True
+randomize_goal_pos: False # True
 max_episode_time: 20.0
 pause_on_collision: False
 initial_pause_s: 0
+goal_arrival_threshold: 0.005
